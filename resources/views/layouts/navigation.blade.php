@@ -16,6 +16,24 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+
+                @role('student')
+                    <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+                        {{ __('Students') }}
+                    </x-nav-link>
+                @endrole
+
+                @role('teacher')
+                    <x-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
+                        {{ __('Teachers') }}
+                    </x-nav-link>
+                @endrole
+
+                @role('admin')
+                    <x-nav-link :href="route('admins.index')" :active="request()->routeIs('admins.*')">
+                        {{ __('Admins') }}
+                    </x-nav-link>
+                @endrole
             </div>
 
             <!-- Settings Dropdown -->
@@ -70,6 +88,24 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @role('student')
+                <x-responsive-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+                    {{ __('Students') }}
+                </x-responsive-nav-link>
+            @endrole
+
+            @role('teacher')
+                <x-responsive-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
+                    {{ __('Teachers') }}
+                </x-responsive-nav-link>
+            @endrole
+
+            @role('admin')
+                <x-responsive-nav-link :href="route('admins.index')" :active="request()->routeIs('admins.*')">
+                    {{ __('Admins') }}
+                </x-responsive-nav-link>
+            @endrole
         </div>
 
         <!-- Responsive Settings Options -->
