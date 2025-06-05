@@ -3,34 +3,28 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', fn() => view('welcome'));
+
+Route::get('/dashboard', fn() => view('dashboard'))
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+// Students Dashboard
+Route::middleware(['auth', 'can:view-students-dashboard'])->group(function () {
+    Route::get('/students', fn() => view('student.dashboard'))->name('students.index');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware(['auth', 'can:manage-users'])->group(function () {
-    Route::get('/admins', function () {
-        return view('adminFiles.dashboard'); // views/admin/dashboard.blade.php
-    })->name('admins.index');
+// Teachers Dashboard
+Route::middleware(['auth', 'can:view-teachers-dashboard'])->group(function () {
+    Route::get('/teachers', fn() => view('teacher.dashboard'))->name('teachers.index');
 });
 
-// Teacher-only routes
-Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
-    Route::get('/teachers', function () {
-        return view('teacher.dashboard'); // views/teacher/dashboard.blade.php
-    })->name('teachers.index');
+// Admins Dashboard
+Route::middleware(['auth', 'can:view-admins-dashboard'])->group(function () {
+    Route::get('/admins', fn() => view('adminFiles.dashboard'))->name('admins.index');
 });
 
-// Student-only route
-Route::middleware(['auth', 'can:view-self'])->group(function () {
-    Route::get('/students', function () {
-        return view('student.dashboard'); // views/student/dashboard.blade.php
-    })->name('students.index');
-});
-
+// Profile Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -38,3 +32,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+

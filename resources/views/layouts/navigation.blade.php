@@ -24,12 +24,21 @@
                 @endrole
 
                 @role('teacher')
+                    <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+                        {{ __('Students') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
                         {{ __('Teachers') }}
                     </x-nav-link>
                 @endrole
 
                 @role('admin')
+                    <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
+                        {{ __('Students') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
+                        {{ __('Teachers') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('admins.index')" :active="request()->routeIs('admins.*')">
                         {{ __('Admins') }}
                     </x-nav-link>
