@@ -23,19 +23,15 @@ class RoleSeeder extends Seeder
         $viewSelf = Permission::firstOrCreate(['name' => 'view-self']);
         $interactWithStudents = Permission::firstOrCreate(['name' => 'interact-with-students']);
         $manageUsers = Permission::firstOrCreate(['name' => 'manage-users']);
-
-        // New permissions your routes use:
-        $viewStudentsDashboard = Permission::firstOrCreate(['name' => 'view-students-dashboard']);
         $viewTeachersDashboard = Permission::firstOrCreate(['name' => 'view-teachers-dashboard']);
         $viewAdminsDashboard = Permission::firstOrCreate(['name' => 'view-admins-dashboard']);
 
         // Assign Permissions to Roles
-        $studentRole->syncPermissions([$viewSelf, $viewStudentsDashboard]);
+        $studentRole->syncPermissions([$viewSelf]); // Removed view-students-dashboard
 
         $teacherRole->syncPermissions([
             $viewSelf,
             $interactWithStudents,
-            $viewStudentsDashboard,
             $viewTeachersDashboard,
         ]);
 
@@ -43,14 +39,13 @@ class RoleSeeder extends Seeder
             $viewSelf,
             $interactWithStudents,
             $manageUsers,
-            $viewStudentsDashboard,
             $viewTeachersDashboard,
             $viewAdminsDashboard,
         ]);
 
         echo "Permissions assigned to roles.\n";
 
-        // Create or find users
+        // Create users
         $adminUser = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             ['name' => 'Admin User', 'password' => Hash::make('password')]
@@ -61,14 +56,9 @@ class RoleSeeder extends Seeder
             ['name' => 'Teacher User', 'password' => Hash::make('password')]
         );
 
-        $studentUser = User::firstOrCreate(
-            ['email' => 'student@example.com'],
-            ['name' => 'Student User', 'password' => Hash::make('password')]
-        );
-
         echo "Users created or found.\n";
 
-        // Assign roles if not already assigned
+        // Assign roles
         if (!$adminUser->hasRole('admin')) {
             $adminUser->assignRole('admin');
             echo "Assigned admin role to admin user.\n";
@@ -77,11 +67,6 @@ class RoleSeeder extends Seeder
         if (!$teacherUser->hasRole('teacher')) {
             $teacherUser->assignRole('teacher');
             echo "Assigned teacher role to teacher user.\n";
-        }
-
-        if (!$studentUser->hasRole('student')) {
-            $studentUser->assignRole('student');
-            echo "Assigned student role to student user.\n";
         }
     }
 }

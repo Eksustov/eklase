@@ -49,4 +49,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            if (!$user->hasAnyRole(['admin', 'teacher'])) {
+                $user->assignRole('student');
+            }
+        });
+    }
 }

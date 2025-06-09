@@ -17,32 +17,23 @@
                     </x-nav-link>
                 </div>
 
-                @role('student')
-                    <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
-                        {{ __('Students') }}
-                    </x-nav-link>
-                @endrole
-
-                @role('teacher')
-                    <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
-                        {{ __('Students') }}
-                    </x-nav-link>
+                @hasanyrole('teacher|admin')
                     <x-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
                         {{ __('Teachers') }}
                     </x-nav-link>
-                @endrole
+                @endhasanyrole
 
                 @role('admin')
-                    <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
-                        {{ __('Students') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
-                        {{ __('Teachers') }}
-                    </x-nav-link>
                     <x-nav-link :href="route('admins.index')" :active="request()->routeIs('admins.*')">
                         {{ __('Admins') }}
                     </x-nav-link>
                 @endrole
+
+                @auth
+                    <x-nav-link :href="route('subjects.index')" :active="request()->routeIs('subjects.index')">
+                        {{ __('Subjects') }}
+                    </x-nav-link>
+                @endauth
             </div>
 
             <!-- Settings Dropdown -->
@@ -98,23 +89,23 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            @role('student')
-                <x-responsive-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
-                    {{ __('Students') }}
-                </x-responsive-nav-link>
-            @endrole
-
-            @role('teacher')
+            @hasanyrole('teacher|admin')
                 <x-responsive-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
                     {{ __('Teachers') }}
                 </x-responsive-nav-link>
-            @endrole
+            @endhasanyrole
 
             @role('admin')
                 <x-responsive-nav-link :href="route('admins.index')" :active="request()->routeIs('admins.*')">
                     {{ __('Admins') }}
                 </x-responsive-nav-link>
             @endrole
+
+            @auth
+                <x-responsive-nav-link :href="route('subjects.index')" :active="request()->routeIs('subjects.index')">
+                    {{ __('Subjects') }}
+                </x-responsive-nav-link>
+            @endauth
         </div>
 
         <!-- Responsive Settings Options -->
