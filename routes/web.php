@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ConfirmController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +25,13 @@ Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/confirm', [ConfirmController::class, 'index'])->name('confirm');
+    Route::post('/confirm', [ConfirmController::class, 'store'])->name('confirm.store');
+});
+
+Route::middleware(['auth'])->post('/students/store', [StudentController::class, 'store'])->name('students.store');
 
 // Profile routes for any authenticated user
 Route::middleware('auth')->group(function () {

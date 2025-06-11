@@ -9,7 +9,7 @@ class SubjectController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::all(); // Or filter based on user, if needed
+        $subjects = Subject::all();
         return view('subjects.index', compact('subjects'));
     }
 }
