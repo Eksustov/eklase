@@ -13,9 +13,7 @@
 
                     @if(
                         Auth::user()->hasRole('student') 
-                        && !Auth::user()->hasRole('admin') 
-                        && !Auth::user()->hasRole('teacher') 
-                        && !App\Models\Student::where('user_id', Auth::id())->exists() 
+                        && !$profileCompleted
                         && !session('profile_completed')
                     )
                         <!-- Popup modal -->
