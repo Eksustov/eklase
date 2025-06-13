@@ -28,7 +28,7 @@ class SubjectController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('subjects.index');
+        return redirect()->route('admins.index');
     }
 
     public function edit(Subject $subject)
@@ -46,12 +46,12 @@ class SubjectController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('subjects.index');
+        return redirect()->route('admins.index');
     }
 
     public function destroy(Subject $subject)
     {
         $subject->delete();
-        return redirect()->route('subjects.index');
+        return redirect()->route('admins.index');
     }
 }

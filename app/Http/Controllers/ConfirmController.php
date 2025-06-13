@@ -12,9 +12,17 @@ class ConfirmController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->hasRole('student') || Student::where('user_id', $user->id)->exists()) {
+        // Redirect if NOT a student
+        if (!$user->hasRole('student')) {
+            return redirect()->route('dashboard')->with('error', 'Access denied.');
+        }
+
+        // Redirect if student already completed profile
+        if (Student::where('user_id', $user->id)->exists()) {
             return redirect()->route('dashboard');
         }
+
+        // Show confirm view
         return view('confirm');
     }
 }

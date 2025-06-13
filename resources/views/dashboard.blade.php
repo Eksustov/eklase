@@ -9,13 +9,17 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    {{ __("You're logged in!") }}
-
+                    {{ __('You are logged in as ') }}{{ Auth::user()->name }}
+                    
                     @if(
-                        Auth::user()->hasRole('student') 
-                        && !$profileCompleted
-                        && !session('profile_completed')
-                    )
+                    Auth::check() &&
+                    Auth::user()->hasRole('student') &&
+                    !Auth::user()->hasRole('admin') &&
+                    !Auth::user()->hasRole('teacher') &&
+                    !$profileCompleted &&
+                    !session('profile_completed')
+                )
+
                         <!-- Popup modal -->
                         <div id="profile-popup" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
                             <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
@@ -33,3 +37,4 @@
         </div>
     </div>
 </x-app-layout>
+
