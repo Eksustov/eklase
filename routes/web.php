@@ -27,6 +27,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
 });
 
+Route::middleware(['auth', 'can:manage-users'])->group(function () {
+    Route::resource('/subjects', SubjectController::class)->except(['show']);
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/confirm', [ConfirmController::class, 'index'])->name('confirm');
     Route::post('/confirm', [ConfirmController::class, 'store'])->name('confirm.store');
