@@ -47,13 +47,13 @@ class RoleSeeder extends Seeder
 
         // Create users
         $adminUser = User::firstOrCreate(
-            ['email' => 'admin@example.com'],
-            ['name' => 'Admin User', 'password' => Hash::make('password')]
+            ['email' => 'admin@admin.com'],
+            ['name' => 'Admin', 'password' => Hash::make('password')]
         );
 
         $teacherUser = User::firstOrCreate(
-            ['email' => 'teacher@example.com'],
-            ['name' => 'Teacher User', 'password' => Hash::make('password')]
+            ['email' => 'teacher@teacher.com'],
+            ['name' => 'Teacher', 'password' => Hash::make('password')]
         );
 
         echo "Users created or found.\n";

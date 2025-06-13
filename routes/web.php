@@ -1,44 +1,55 @@
 <?php
 
+use App\Models\Student;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConfirmController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\Route;
 
+// Welcome
 Route::get('/', fn() => view('welcome'));
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Dashboard
+Route::get('/dashboard', function () {
+    $user = Auth::user();
+    $profileCompleted = false;
 
-// Admin routes (users with manage-users permission)
+    if ($user->hasRole('student')) {
+        $profileCompleted = Student::where('user_id', $user->id)->exists();
+    }
+
+    return view('dashboard', compact('profileCompleted'));
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// Admin
 Route::middleware(['auth', 'can:manage-users'])->group(function () {
     Route::get('/admins', fn() => view('adminFiles.dashboard'))->name('admins.index');
 });
 
-// Teacher routes (users with interact-with-students permission)
+// Teacher
 Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
     Route::get('/teachers', fn() => view('teacher.dashboard'))->name('teachers.index');
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
+// Student
+Route::middleware(['auth', 'can:view-self'])->group(function () {
+    Route::post('/students', [StudentController::class, 'store'])->name('students.store');
 });
 
-Route::middleware(['auth', 'can:manage-users'])->group(function () {
+// Subjects
+Route::middleware(['auth'])->group(function () {
     Route::resource('/subjects', SubjectController::class)->except(['show']);
 });
 
+// Confirm
 Route::middleware(['auth'])->group(function () {
     Route::get('/confirm', [ConfirmController::class, 'index'])->name('confirm');
     Route::post('/confirm', [ConfirmController::class, 'store'])->name('confirm.store');
 });
 
-Route::middleware(['auth'])->post('/students/store', [StudentController::class, 'store'])->name('students.store');
-
-// Profile routes for any authenticated user
+// Profile
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

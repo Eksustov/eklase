@@ -18,7 +18,7 @@ class StudentController extends Controller
         $user = Auth::user();
 
         if (Student::where('user_id', $user->id)->exists()) {
-            return redirect()->route('dashboard')->with('status', 'Profile already completed.');
+            return redirect()->route('dashboard');
         }
 
         Student::create([
@@ -27,9 +27,8 @@ class StudentController extends Controller
             'last_name'  => $request->last_name,
         ]);
 
-        // Set session flag to NOT show popup anymore
         session()->flash('profile_completed', true);
 
-        return redirect()->route('dashboard')->with('status', 'Profile completed successfully!');
+        return redirect()->route('dashboard');
     }
 }
