@@ -26,7 +26,7 @@
                     <ul class="mt-4 space-y-2">
                         @foreach(\App\Models\Subject::all() as $subject)
                             <li class="flex justify-between items-center border-b pb-1">
-                                <span>{{ $subject->subject_name }}</span>
+                                <span>{{ $subject->name }}</span>
                                 <div class="space-x-2">
                                     <a href="{{ route('subjects.edit', $subject) }}" class="text-blue-600">Edit</a>
                                     <form action="{{ route('subjects.destroy', $subject) }}" method="POST" class="inline-block">
