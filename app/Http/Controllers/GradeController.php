@@ -74,5 +74,26 @@ class GradeController extends Controller
 
         return view('grades.my', compact('grades'));
     }
+
+    public function gradesBySubject(Subject $subject)
+    {
+        $grades = Grade::with('student.user')
+            ->where('subject_id', $subject->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('grades.by-subject', compact('grades', 'subject'));
+    }
+
+    public function gradesByStudent(Student $student)
+    {
+        $grades = Grade::with('subject')
+            ->where('student_id', $student->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('grades.by-student', compact('grades', 'student'));
+    }
+    
 }
 

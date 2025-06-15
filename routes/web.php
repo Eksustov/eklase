@@ -8,6 +8,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GradeController;
+use App\Models\Subject;
 
 
 // Welcome
@@ -32,10 +33,18 @@ Route::middleware(['auth', 'can:manage-users'])->group(function () {
 
 // Teacher
 Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
-    Route::get('/teachers', fn() => view('teacher.dashboard'))->name('teachers.index');
+    Route::get('/teachers', function () {
+        $subjects = Subject::all();
+        $students = Student::with('user')->get();  // eager load user if you want
+        return view('teacher.dashboard', compact('subjects', 'students'));
+    })->middleware(['auth'])->name('teachers.index');
     Route::get('/grades/create', [GradeController::class, 'create'])->name('grades.create');
     Route::post('/grades', [GradeController::class, 'store'])->name('grades.store');
     Route::resource('grades', GradeController::class);
+    Route::get('/subjects/{subject}/grades', [GradeController::class, 'gradesBySubject'])->name('grades.bySubject');
+    Route::get('/students/{student}/grades', [GradeController::class, 'gradesByStudent'])->name('grades.byStudent');
+
+
 });
 
 // Student
