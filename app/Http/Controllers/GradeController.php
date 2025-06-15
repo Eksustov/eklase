@@ -26,19 +26,19 @@ class GradeController extends Controller
             'grade' => 'required|integer|min:1|max:10',
         ]);
 
-        Grade::updateOrCreate(
-            ['student_id' => $validated['student_id'], 'subject_id' => $validated['subject_id']],
-            ['grade' => $validated['grade']]
-        );
+        Grade::create($validated);
 
         return redirect()->route('grades.create')->with('success', 'Grade saved successfully.');
     }
 
-    public function edit(Grade $grade)
+
+    public function edit(Grade $grade, Request $request)
     {
         $students = Student::all();
         $subjects = Subject::all();
-        return view('grades.edit', compact('grade', 'students', 'subjects'));
+        $redirectTo = $request->input('redirect_to', route('grades.create')); // fallback
+
+        return view('grades.edit', compact('grade', 'students', 'subjects', 'redirectTo'));
     }
 
     public function update(Request $request, Grade $grade)
@@ -55,8 +55,11 @@ class GradeController extends Controller
             'grade' => $request->grade,
         ]);
 
-        return redirect()->route('grades.index')->with('success', 'Grade updated successfully.');
+        $redirectTo = $request->input('redirect_to', route('grades.create'));
+
+        return redirect($redirectTo)->with('success', 'Grade updated successfully.');
     }
+
 
     public function myGrades()
     {
@@ -93,6 +96,15 @@ class GradeController extends Controller
             ->get();
 
         return view('grades.by-student', compact('grades', 'student'));
+    }
+
+    public function destroy(Request $request, Grade $grade)
+    {
+        $grade->delete();
+
+        $redirectTo = $request->input('redirect_to', route('grades.create'));
+
+        return redirect($redirectTo)->with('success', 'Grade deleted successfully.');
     }
     
 }

@@ -43,8 +43,7 @@ Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
     Route::resource('grades', GradeController::class);
     Route::get('/subjects/{subject}/grades', [GradeController::class, 'gradesBySubject'])->name('grades.bySubject');
     Route::get('/students/{student}/grades', [GradeController::class, 'gradesByStudent'])->name('grades.byStudent');
-
-
+    Route::delete('/grades/{grade}', [GradeController::class, 'destroy'])->name('grades.destroy');
 });
 
 // Student

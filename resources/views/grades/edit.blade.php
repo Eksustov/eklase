@@ -38,6 +38,7 @@
                     <input type="number" name="grade" min="1" max="10" value="{{ $grade->grade }}" class="w-full border rounded p-2">
                 </div>
 
+                <input type="hidden" name="redirect_to" value="{{ $redirectTo }}">
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Update Grade</button>
             </form>
         </div>
