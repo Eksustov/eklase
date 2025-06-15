@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\Grade;
 use App\Models\Student;
 use App\Models\Subject;
@@ -31,6 +32,47 @@ class GradeController extends Controller
         );
 
         return redirect()->route('grades.create')->with('success', 'Grade saved successfully.');
+    }
+
+    public function edit(Grade $grade)
+    {
+        $students = Student::all();
+        $subjects = Subject::all();
+        return view('grades.edit', compact('grade', 'students', 'subjects'));
+    }
+
+    public function update(Request $request, Grade $grade)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'grade' => 'required|integer|min:1|max:10',
+        ]);
+
+        $grade->update([
+            'student_id' => $request->student_id,
+            'subject_id' => $request->subject_id,
+            'grade' => $request->grade,
+        ]);
+
+        return redirect()->route('grades.index')->with('success', 'Grade updated successfully.');
+    }
+
+    public function myGrades()
+    {
+        $user = Auth::user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        if (!$student) {
+            abort(403, 'Not authorized or student profile not found.');
+        }
+
+        $grades = Grade::with('subject')
+            ->where('student_id', $student->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('grades.my', compact('grades'));
     }
 }
 

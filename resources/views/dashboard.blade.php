@@ -10,6 +10,8 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     {{ __('You are logged in as ') }}{{ Auth::user()->name }}
+
+                    <a href="{{ route('grades.my') }}" class="bg-blue-500 text-white px-4 py-2 rounded">View My Grades</a>
                     
                     @if(
                     Auth::check() &&

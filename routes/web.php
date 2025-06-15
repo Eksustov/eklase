@@ -35,11 +35,14 @@ Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
     Route::get('/teachers', fn() => view('teacher.dashboard'))->name('teachers.index');
     Route::get('/grades/create', [GradeController::class, 'create'])->name('grades.create');
     Route::post('/grades', [GradeController::class, 'store'])->name('grades.store');
+    Route::resource('grades', GradeController::class);
 });
 
 // Student
 Route::middleware(['auth', 'can:view-self'])->group(function () {
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::get('/my-grades', [\App\Http\Controllers\GradeController::class, 'myGrades'])->name('grades.my');
+
 });
 
 // Subjects
