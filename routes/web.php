@@ -7,6 +7,8 @@ use App\Http\Controllers\ConfirmController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GradeController;
+
 
 // Welcome
 Route::get('/', fn() => view('welcome'));
@@ -31,6 +33,8 @@ Route::middleware(['auth', 'can:manage-users'])->group(function () {
 // Teacher
 Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
     Route::get('/teachers', fn() => view('teacher.dashboard'))->name('teachers.index');
+    Route::get('/grades/create', [GradeController::class, 'create'])->name('grades.create');
+    Route::post('/grades', [GradeController::class, 'store'])->name('grades.store');
 });
 
 // Student
