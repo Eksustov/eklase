@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold text-gray-800 leading-tight">
-            Grades for {{ $subject->name }}
+            My Grades for {{ $subject->name }}
         </h2>
     </x-slot>
 
@@ -20,9 +20,7 @@
                         <tbody>
                             @foreach ($grades as $grade)
                                 <tr>
-                                    <td class="px-4 py-2 border text-center">
-                                        {{ $grade->student->first_name }} {{ $grade->student->last_name }}
-                                    </td>
+                                    <td class="px-4 py-2 border text-center">{{ $grade->student->first_name }} {{ $grade->student->last_name }}</td>
                                     <td class="px-4 py-2 border text-center">{{ $grade->grade }}</td>
                                     <td class="px-4 py-2 border text-center">{{ $grade->created_at->format('F j, Y') }}</td>
                                 </tr>

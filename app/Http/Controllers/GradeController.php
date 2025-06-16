@@ -67,10 +67,14 @@ class GradeController extends Controller
         $user = Auth::user();
         $student = Student::where('user_id', $user->id)->first();
 
-        $grades = Grade::with('subject')
-            ->where('student_id', $student->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        if ($student) {
+            $grades = Grade::with('subject')
+                ->where('student_id', $student->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $grades = collect();
+        }
 
         return view('grades.my', compact('grades'));
     }
@@ -97,19 +101,19 @@ class GradeController extends Controller
 
     public function showSubjectGrades(Subject $subject)
     {
-        $grades = Grade::with(['student.user'])
+        $grades = Grade::with('student.user')
             ->where('subject_id', $subject->id)
             ->orderByDesc('created_at')
             ->get();
 
-        return view('subjects.show', compact('subject', 'grades'));
+        return view('subjects.show', compact('grades', 'subject'));
     }
 
     public function destroy(Request $request, Grade $grade)
     {
         $grade->delete();
 
-        $redirectTo = $request->input('redirect_to', route('grades.create'));
+        $redirectTo = $request->input('redirect_to', route('grades.byStudent', ['student' => $grade->student->id]));
 
         return redirect($redirectTo)->with('success', 'Grade deleted successfully.');
     }
