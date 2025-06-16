@@ -56,4 +56,13 @@ class User extends Authenticatable
             }
         });
     }
+
+    // app/Models/User.php
+
+    public function profilePicture()
+    {
+        return $this->hasOne(\App\Models\ProfilePicture::class);
+    }
+
+
 }
