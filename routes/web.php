@@ -35,36 +35,33 @@ Route::middleware(['auth', 'can:manage-users'])->group(function () {
 // Teacher
 Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
     Route::get('/teachers', function (Request $request) {
-        // Subjects search & sort
-        $subjectQuery = Subject::query();
+        $subjects = Subject::all();
 
-        if ($request->filled('subject_search')) {
-            $subjectQuery->where('name', 'like', '%' . $request->subject_search . '%');
-        }
+        // Step 1: Query with eager-loaded user
+        $studentsQuery = Student::query();
 
-        if ($request->filled('subject_sort')) {
-            $subjectQuery->orderBy('name', $request->subject_sort);
-        }
-
-        $subjects = $subjectQuery->get();
-
-        // Students search & sort
-        $studentQuery = Student::with('user');
-
+        // Step 2: Filter by student name
         if ($request->filled('student_search')) {
-            $studentQuery->whereHas('user', function ($q) use ($request) {
-                $q->where('first_name', 'like', '%' . $request->student_search . '%')
-                ->orWhere('last_name', 'like', '%' . $request->student_search . '%');
+            $search = $request->student_search;
+            $studentsQuery->where(function ($query) use ($search) {
+                $query->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%');
             });
         }
 
-        if ($request->filled('student_sort')) {
-            $studentQuery->join('users', 'students.user_id', '=', 'users.id')
-                        ->orderBy('users.first_name', $request->student_sort)
-                        ->select('students.*'); // ensure only student columns are selected
-        }
+        // Step 3: Get the students
+        $students = $studentsQuery->get();
 
-        $students = $studentQuery->get();
+        // Step 4: Sort in PHP
+        if ($request->filled('student_sort')) {
+            $students = $students->sortBy(function ($student) {
+                return strtolower($student->user->first_name . ' ' . $student->user->last_name);
+            });
+
+            if ($request->student_sort === 'desc') {
+                $students = $students->reverse();
+            }
+        }
 
         return view('teacher.dashboard', compact('subjects', 'students'));
     })->middleware(['auth'])->name('teachers.index');
