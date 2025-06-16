@@ -9,6 +9,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GradeController;
 use App\Models\Subject;
+use Illuminate\Http\Request;
 
 
 // Welcome
@@ -33,11 +34,41 @@ Route::middleware(['auth', 'can:manage-users'])->group(function () {
 
 // Teacher
 Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
-    Route::get('/teachers', function () {
-        $subjects = Subject::all();
-        $students = Student::with('user')->get();  // eager load user if you want
+    Route::get('/teachers', function (Request $request) {
+        // Subjects search & sort
+        $subjectQuery = Subject::query();
+
+        if ($request->filled('subject_search')) {
+            $subjectQuery->where('name', 'like', '%' . $request->subject_search . '%');
+        }
+
+        if ($request->filled('subject_sort')) {
+            $subjectQuery->orderBy('name', $request->subject_sort);
+        }
+
+        $subjects = $subjectQuery->get();
+
+        // Students search & sort
+        $studentQuery = Student::with('user');
+
+        if ($request->filled('student_search')) {
+            $studentQuery->whereHas('user', function ($q) use ($request) {
+                $q->where('first_name', 'like', '%' . $request->student_search . '%')
+                ->orWhere('last_name', 'like', '%' . $request->student_search . '%');
+            });
+        }
+
+        if ($request->filled('student_sort')) {
+            $studentQuery->join('users', 'students.user_id', '=', 'users.id')
+                        ->orderBy('users.first_name', $request->student_sort)
+                        ->select('students.*'); // ensure only student columns are selected
+        }
+
+        $students = $studentQuery->get();
+
         return view('teacher.dashboard', compact('subjects', 'students'));
     })->middleware(['auth'])->name('teachers.index');
+
     Route::get('/grades/create', [GradeController::class, 'create'])->name('grades.create');
     Route::post('/grades', [GradeController::class, 'store'])->name('grades.store');
     Route::resource('grades', GradeController::class);
