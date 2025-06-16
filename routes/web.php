@@ -11,7 +11,6 @@ use App\Http\Controllers\GradeController;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 
-
 // Welcome
 Route::get('/', fn() => view('welcome'));
 
@@ -82,13 +81,12 @@ Route::middleware(['auth', 'can:view-self'])->group(function () {
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
     Route::get('/my-grades', [\App\Http\Controllers\GradeController::class, 'myGrades'])->name('grades.my');
     Route::get('/grades/export/pdf', [GradeController::class, 'exportPdf'])->name('grades.export.pdf');
-
-
 });
 
 // Subjects
 Route::middleware(['auth'])->group(function () {
     Route::resource('/subjects', SubjectController::class)->except(['show']);
+    Route::get('/subjects/{subject}/grades', [GradeController::class, 'showSubjectGrades'])->name('subjects.grades.show');
 });
 
 // Confirm

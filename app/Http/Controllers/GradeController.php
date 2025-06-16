@@ -67,10 +67,6 @@ class GradeController extends Controller
         $user = Auth::user();
         $student = Student::where('user_id', $user->id)->first();
 
-        if (!$student) {
-            abort(403, 'Not authorized or student profile not found.');
-        }
-
         $grades = Grade::with('subject')
             ->where('student_id', $student->id)
             ->orderBy('created_at', 'desc')
@@ -99,6 +95,16 @@ class GradeController extends Controller
         return view('grades.by-student', compact('grades', 'student'));
     }
 
+    public function showSubjectGrades(Subject $subject)
+    {
+        $grades = Grade::with(['student.user'])
+            ->where('subject_id', $subject->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('subjects.show', compact('subject', 'grades'));
+    }
+
     public function destroy(Request $request, Grade $grade)
     {
         $grade->delete();
@@ -125,7 +131,4 @@ class GradeController extends Controller
         return Pdf::loadView('grades.pdf', compact('grades'))
             ->download('my-grades.pdf');
     }
-
-    
 }
-

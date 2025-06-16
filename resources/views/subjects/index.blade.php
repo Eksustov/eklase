@@ -11,9 +11,11 @@
                 <div class="p-6 text-gray-900">
                     @if ($subjects->count())
                         @foreach ($subjects as $subject)
-                            <a href="#" class="block mb-4 bg-gray-100 p-4 rounded-lg hover:bg-gray-200">
-                                {{ $subject->name }}
-                            </a>
+                            <div class="mb-4 bg-gray-100 p-4 rounded-lg hover:bg-gray-200">
+                                <a href="{{ route('subjects.grades.show', $subject) }}" class="block">
+                                    {{ $subject->name }}
+                                </a>
+                            </div>
                         @endforeach
                     @else
                         <p>No subjects available.</p>
