@@ -72,8 +72,8 @@ Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
     Route::get('/grades/create', [GradeController::class, 'create'])->name('grades.create');
     Route::post('/grades', [GradeController::class, 'store'])->name('grades.store');
     Route::resource('grades', GradeController::class);
-    Route::get('/subjects/{subject}/grades', [GradeController::class, 'gradesBySubject'])->name('grades.bySubject');
-    Route::get('/students/{student}/grades', [GradeController::class, 'gradesByStudent'])->name('grades.byStudent');
+    Route::get('/grades/subject/{subject}', [GradeController::class, 'gradesBySubject'])->name('grades.bySubject');
+    Route::get('/grades/student/{student}', [GradeController::class, 'gradesByStudent'])->name('grades.byStudent');
     Route::delete('/grades/{grade}', [GradeController::class, 'destroy'])->name('grades.destroy');
 });
 
@@ -105,3 +105,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
