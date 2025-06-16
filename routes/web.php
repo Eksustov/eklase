@@ -35,24 +35,45 @@ Route::middleware(['auth', 'can:manage-users'])->group(function () {
 // Teacher
 Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
     Route::get('/teachers', function (Request $request) {
-        $subjects = Subject::all();
 
-        // Step 1: Query with eager-loaded user
+        // Subject query for filter dropdown and list
+        $subjectQuery = Subject::query();
+
+        if ($request->filled('subject_search')) {
+            $subjectQuery->where('name', 'like', '%' . $request->subject_search . '%');
+        }
+        if ($request->filled('subject_sort')) {
+            $subjectQuery->orderBy('name', $request->subject_sort);
+        }
+
+        $subjects = $subjectQuery->get();
+
+        // Student query with relations
         $studentsQuery = Student::query();
 
-        // Step 2: Filter by student name
+        // Filter students by user name
         if ($request->filled('student_search')) {
             $search = $request->student_search;
-            $studentsQuery->where(function ($query) use ($search) {
-                $query->where('first_name', 'like', '%' . $search . '%')
-                    ->orWhere('last_name', 'like', '%' . $search . '%');
+            $studentsQuery->where(function($q) use ($search) {
+                $q->where('first_name', 'like', '%' . $search . '%')
+                ->orWhere('last_name', 'like', '%' . $search . '%');
             });
         }
 
-        // Step 3: Get the students
-        $students = $studentsQuery->get();
+        // Filter students by subject_id selected in the form
+        if ($request->filled('student_sort')) {
+            $students = $studentsQuery->get()->sortBy(function($student) {
+                return strtolower($student->first_name . ' ' . $student->last_name);
+            });
 
-        // Step 4: Sort in PHP
+            if ($request->student_sort == 'desc') {
+                $students = $students->reverse();
+            }
+        } else {
+            $students = $studentsQuery->get();
+        }
+
+        // Sort students by user full name in PHP
         if ($request->filled('student_sort')) {
             $students = $students->sortBy(function ($student) {
                 return strtolower($student->user->first_name . ' ' . $student->user->last_name);
@@ -64,6 +85,7 @@ Route::middleware(['auth', 'can:interact-with-students'])->group(function () {
         }
 
         return view('teacher.dashboard', compact('subjects', 'students'));
+
     })->middleware(['auth'])->name('teachers.index');
 
     Route::get('/grades/create', [GradeController::class, 'create'])->name('grades.create');
