@@ -23,7 +23,10 @@
                         foreach ($grades as $grade) {
                             $month = $grade->created_at->format('F Y');
                             $subject = $grade->subject->name;
-                            $gradesMatrix[$subject][$month][] = $grade->grade;
+                            $gradesMatrix[$subject][$month][] = [
+                                'grade' => $grade->grade,
+                                'created_at' => $grade->created_at->format('F j, Y'),
+                            ];
                         }
                     @endphp
 
@@ -31,24 +34,20 @@
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="px-4 py-2 border">Subject</th>
-                                @foreach ($months as $month)
-                                    <th class="px-4 py-2 border">{{ $month }}</th>
-                                @endforeach
+                                <th class="px-4 py-2 border">Grade</th>
+                                <th class="px-4 py-2 border">Date</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($subjects as $subject)
                                 <tr>
-                                    <td class="px-4 py-2 border font-medium text-left">{{ $subject }}</td>
-                                    @foreach ($months as $month)
-                                        <td class="px-4 py-2 border">
-                                            @if (isset($gradesMatrix[$subject][$month]))
-                                                {{ implode(', ', $gradesMatrix[$subject][$month]) }}
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                    @endforeach
+                                    <td class="px-4 py-2 border font-medium text-center">{{ $subject }}</td>
+                                    <td class="px-4 py-2 border">
+                                        {{ $grades->where('subject.name', $subject)->last()->grade }}
+                                    </td>
+                                    <td class="px-4 py-2 border">
+                                        {{ $grades->where('subject.name', $subject)->last()->created_at->format('F j, Y') }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

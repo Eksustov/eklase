@@ -11,7 +11,9 @@
                 <div class="p-6 text-gray-900">
                     {{ __('You are logged in as ') }}{{ Auth::user()->name }}
 
-                    <a href="{{ route('grades.my') }}" class="bg-blue-500 text-white px-4 py-2 rounded">View My Grades</a>
+                    @if (Auth::check() && !Auth::user()->hasRole('admin') && !Auth::user()->hasRole('teacher'))
+                        <a href="{{ route('grades.my') }}" class="bg-blue-500 text-white px-4 py-2 rounded">View My Grades</a>
+                    @endif
                     
                     @if(
                     Auth::check() &&
