@@ -12,7 +12,7 @@
                     {{ __('You are logged in as ') }}{{ Auth::user()->name }}
 
                     @if (Auth::check() && !Auth::user()->hasRole('admin') && !Auth::user()->hasRole('teacher'))
-                        <a href="{{ route('grades.my') }}" class="bg-blue-500 text-white px-4 py-2 rounded">View My Grades</a>
+                        <a href="{{ route('grades.my') }}" class="px-4 py-2 rounded text-blue-600 hover:text-blue-700 hover:underline transition duration-150 ease-in-out">View My Grades</a>
                     @endif
                     
                     @if(
