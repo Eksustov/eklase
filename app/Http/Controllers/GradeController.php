@@ -7,6 +7,7 @@ use App\Models\Grade;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class GradeController extends Controller
 {
@@ -106,6 +107,25 @@ class GradeController extends Controller
 
         return redirect($redirectTo)->with('success', 'Grade deleted successfully.');
     }
+
+    public function exportPdf()
+    {
+        $user = auth()->user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        if (!$student) {
+            abort(403, 'Not authorized or student profile not found.');
+        }
+
+        $grades = Grade::with('subject')
+            ->where('student_id', $student->id)
+            ->orderBy('created_at')
+            ->get();
+
+        return Pdf::loadView('grades.pdf', compact('grades'))
+            ->download('my-grades.pdf');
+    }
+
     
 }
 
